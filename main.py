@@ -23,7 +23,9 @@ files.print()
 ## get current sections on moodle
 course = Moodle()
 course.FetchSections(courseid)
+#course.PrintSections() 
 course.BuildSectionsToUpdate(files.filesperweek)
+course.PrintUpdateSections()
 
 ## Write the data back to Moodle
 #sec_write = LocalUpdateSections(courseid, data)

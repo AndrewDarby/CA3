@@ -49,7 +49,7 @@ class Files():
                         # set title from html file (in case there was no md file)
                         ##TODO++ fileinfo["htmltitle"] = "Week {weekno}: {htmlfiletitle(filepath)}"
                         fileinfo["htmltitle"] = self.htmlfiletitle(filepath)
-                        fileinfo["slidesurl"] = os.path.join(baseurl, filepath).replace('\\','/')
+                        fileinfo["slidesurl"] = os.path.join(baseurl, filepath).replace('\\','/').replace('\\index.html','')
                     if (ext == ".pdf"):
                         # if filename is "wk{weekno}.pdf" add as main slidespdfurl
                         isWeekfile = (filename == f"wk{weekno}.pdf")

@@ -2,12 +2,16 @@ from datetime import datetime
 import json
 from common.files import Files
 from common.moodle import Moodle
+from common.videos import Videos
 
 GITHUBBASEURL = "https://github.com/AndrewDarby/CA3"
+GDRIVEVIDEOFOLDER ="https://drive.google.com/drive/folders/1pFHUrmpLv9gEJsvJYKxMdISuQuQsd_qX"
 MOODLEURL = ""
 FILESFOLDER = "files/"
 ALLFILES = ['.html','.md','.pdf','.ppt']
 SECODNDARYFILES = ['.pdf','.ppt']
+TERMSTARTDATES = ['01/10/2020','01/01/2021','10/05/2021']
+WEEKSPERTERM = 12
 
 courseid = "15"
 viewcourse="https://034f8a1dcb5c.eu.ngrok.io/course/view.php?id=15"
@@ -16,8 +20,12 @@ viewcourse="https://034f8a1dcb5c.eu.ngrok.io/course/view.php?id=15"
 # Scan all local folders, and add to dictionary
 files = Files()
 files.findfiles(FILESFOLDER,GITHUBBASEURL,ALLFILES,SECODNDARYFILES) 
-files.print()
+#files.print()
 
+videos = Videos()
+videos.findvideos(GDRIVEVIDEOFOLDER,TERMSTARTDATES)
+
+'''
 ## get current sections on moodle
 course = Moodle()
 course.FetchSections(courseid)
@@ -25,6 +33,7 @@ course.FetchSections(courseid)
 course.BuildSectionsToUpdate(files.filesperweek)
 course.PrintUpdateSections()
 course.UploadChanges(courseid)
+'''
 
     
     

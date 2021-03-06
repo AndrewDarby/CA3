@@ -10,30 +10,38 @@ MOODLEURL = ""
 FILESFOLDER = "files/"
 ALLFILES = ['.html','.md','.pdf','.ppt']
 SECODNDARYFILES = ['.pdf','.ppt']
-TERMSTARTDATES = ['01/10/2020','01/01/2021','10/05/2021']
+TERMSTARTDATES = ['2020-09-28','2021-01-01','2021-05-01']
 WEEKSPERTERM = 12
 
 courseid = "15"
 viewcourse="https://034f8a1dcb5c.eu.ngrok.io/course/view.php?id=15"
 
+## get current sections on moodle
+course = Moodle()
+course.FetchSections(courseid)
+#course.PrintSections()
 
 # Scan all local folders, and add to dictionary
 files = Files()
 files.findfiles(FILESFOLDER,GITHUBBASEURL,ALLFILES,SECODNDARYFILES) 
 #files.print()
 
-videos = Videos()
-videos.findvideos(GDRIVEVIDEOFOLDER,TERMSTARTDATES)
+#course.BuildSectionsFromFiles(files.filesperweek)
+#course.PrintUpdateSections()
+#course.UploadChanges(courseid)
 
-'''
-## get current sections on moodle
-course = Moodle()
-course.FetchSections(courseid)
-####course.PrintSections() 
-course.BuildSectionsToUpdate(files.filesperweek)
+videos = Videos()
+videos.findvideos(GDRIVEVIDEOFOLDER,TERMSTARTDATES) ## remember read from live url !!
+videos.sortvideosintosections()
+videos.printlinks()
+videos.printsections()
+course.ClearSectionsToUpdate()
+course.BuildSectionsFromVideos(videos.videospersection)
+
+
+#course.BuildSectionsFromFiles(files.filesperweek)
 course.PrintUpdateSections()
 course.UploadChanges(courseid)
-'''
 
     
     

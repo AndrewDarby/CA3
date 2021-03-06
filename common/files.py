@@ -7,22 +7,33 @@ represents collection of files on filesystem
 import pathlib
 import os
 import re
+import math
+import datetime
 from os import system, name
 
 class Files():
     def __init__(self):
         # initalise files obj
-        self.filesperweek = []  # List of files
-        
+        self.filesPerSecton = {} # Dict of fileinfo
 
-    def findfiles(self,directory,baseurl,allfiles,secondaryfiles):
+    def findfiles(self,directory,baseurl,allfiles,secondaryfiles,termdates):
     # Walk the files folder.
-        for folder, directories, files in os.walk(directory):
-            
-            x = re.search(r"(\d{1,2}).*$", folder)
+        for folder, directories, files in os.walk(directory):         
+
+            print(f'folder {folder}')
+            x = re.search(r"t(\d{1,2}).*wk(\d{1,2}).*$", folder)
             if x is None:
                 continue  
-            weekno = int(x.group(1))
+            termno = int(x.group(1))
+            weekno = int(x.group(2))
+            if (termno > 1):
+                termstart = datetime.datetime.strptime(termdates[termno-1], '%Y-%m-%d')  
+                yearstart = datetime.datetime.strptime(termdates[0], '%Y-%m-%d')
+                tdelta = (termstart - yearstart)
+                weekdiff = math.ceil(tdelta.days/7)
+            else:
+                weekdiff = 0
+            sectionid = weekno + weekdiff
                 
             maxfiles = len(files)
             for count in range(0,maxfiles):
@@ -36,14 +47,12 @@ class Files():
  
                 append = True
                 lectures_append = False
-                # if second file this week, add to existing fileinfo
-                if (len(self.filesperweek) >= weekno):
-                    fileinfo = self.filesperweek[weekno-1]
-                    
-                    append = False
+                # if entry for this section in filesperweek, retrieve that dict
+                if sectionid in self.filesPerSecton: 
+                    fileinfo = self.filesPerSecton[sectionid]
                 # else create new fileinfo to append to collection
                 else:
-                    fileinfo = {"weekno": weekno, "folders": [], "lectureslides": [], "extrafiles": [] }
+                    fileinfo = {"termno": termno, "weekno": weekno, "sectionid": sectionid,"folders": [], "lectureslides": [], "extrafiles": [] }
 
                 foldersthisweek = fileinfo['folders']
                 if (foldername not in foldersthisweek):
@@ -60,11 +69,10 @@ class Files():
                         lectureslides['mdtitle'] = f"Week {weekno}: {self.mdfiletitle(filepath)}"
                     if (ext == ".html"):
                         # set title from html file (in case there was no md file)
-                        ##TODO++ fileinfo["htmltitle"] = "Week {weekno}: {htmlfiletitle(filepath)}"
                         lectureslides['htmltitle'] = self.htmlfiletitle(filepath)
                         lectureslides['slidesurl'] = os.path.join(baseurl, filepath).replace('\\','/').replace('/index.html','/')
                     
-                    x = re.search(r"^wk\d{1,2}", filename)
+                    x = re.search(r"^wk\d{1,2}.*", filename)
                     if (ext == ".pdf" and x is not None):  # if filename is "wk{weekno}*.pdf" 
                             lectureslides["pdfslidesurl"] = os.path.join(baseurl, filepath).replace('\\','/')
                     elif (ext in secondaryfiles):
@@ -79,11 +87,8 @@ class Files():
                     if (lectures_append):
                         fileinfo['lectureslides'].append(lectureslides)
                     else:
-                        fileinfo['lectureslides'][folder_no-1] = lectureslides        
-                    if (append):
-                        self.filesperweek.append(fileinfo)  # Add it to the collection
-                    else:
-                        self.filesperweek[weekno-1] = fileinfo  # Add it to the collection
+                        fileinfo['lectureslides'][folder_no-1] = lectureslides   
+                    self.filesPerSecton[sectionid] = fileinfo                      
                     
 
     def FindNewContentUpload(self,sec):
@@ -120,15 +125,16 @@ class Files():
         return ""
     
     def print(self):
-        # Walk the files folder.
-            for f in self.filesperweek:
-                print(f" {f['weekno']}")
-                #mdtitle
-                lectureslides = f["lectureslides"]
-                for s in lectureslides:
-                    print("-: md: {mdtitle}, html: {htmltitle}".format(mdtitle=s['mdtitle'], htmltitle = s['htmltitle']))
-                    print("-: url: {slidesurl}".format(slidesurl=s['slidesurl']))
-                    if (s['pdfslidesurl'] is not None):
-                        print("-: pdf: {pdfslidesurl}".format(pdfslidesurl= s['pdfslidesurl']))
-                for s in f['extrafiles']:
-                    print(f" ->> Extra {s['title']}, {s['url']}")
+        # iterate filesPerSecton dict.
+        sections = self.filesPerSecton.values()
+        for f in sections:
+            print(f"Term: {f['termno']}, section {f['sectionid']}")
+            #mdtitle
+            lectureslides = f["lectureslides"]
+            for s in lectureslides:
+                print("-: md: {mdtitle}, html: {htmltitle}".format(mdtitle=s['mdtitle'], htmltitle = s['htmltitle']))
+                print("-: url: {slidesurl}".format(slidesurl=s['slidesurl']))
+                if (s['pdfslidesurl'] is not None):
+                    print("-: pdf: {pdfslidesurl}".format(pdfslidesurl= s['pdfslidesurl']))
+            for s in f['extrafiles']:
+                print(f" ->> Extra {s['title']}, {s['url']}")

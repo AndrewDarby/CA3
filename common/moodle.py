@@ -29,10 +29,11 @@ class Moodle():
         self.sectionsToUpdate = [] 
         
     # Build html for Files/slides:
-    def BuildSectionsFromFiles(self,files):  
-        for f in files:
-            sectionId = int(f['weekno'])
-            section = self.sections.getsections[sectionId]['summary']
+    def BuildSectionsFromFiles(self,filesections): 
+        sections = filesections.values()
+        for f in sections: 
+            sectionid = int(f['sectionid'])
+            section = self.sections.getsections[sectionid]['summary']
             if (section == ""): # insert new summary HTML
                 sectionHTML = buildFilesSummary(f)
             else: # section exists
@@ -41,7 +42,7 @@ class Moodle():
                 sectionHTML = buildFilesSummary(f)
                 sectionHTML + videoHTML
             sectionInfo = MOODLESECTION.copy()
-            sectionInfo['section'] = sectionId
+            sectionInfo['section'] = sectionid
             sectionInfo['summary'] = sectionHTML
 
             ##sectionInfo = {"summary": sectionHTML, "section": sectionId }  # REMOVE 
@@ -50,12 +51,12 @@ class Moodle():
     # Build html for Videos:
     # note different video in list can match same section#
     def BuildSectionsFromVideos(self,videosbysection):
-        for sectionId in videosbysection:
-            videos = videosbysection[sectionId]['videolinks']
+        for sectionid in videosbysection:
+            videos = videosbysection[sectionid]['videolinks']
             videoHTML = ""
             for v in videos:
                 videoHTML += buildVideoSummary(v)
-            section = self.sections.getsections[sectionId]['summary'] #exiting moodle sections
+            section = self.sections.getsections[sectionid]['summary'] #exiting moodle sections
             if (section == ""): # insert new summary HTML
                 sectionHTML = videoHTML
             else: # section exists
@@ -64,7 +65,7 @@ class Moodle():
                 filesHTML = findActionsByClass(section,"files")
                 sectionHTML = slidesHTML + filesHTML + videoHTML
             sectionInfo = MOODLESECTION.copy()
-            sectionInfo['section'] = sectionId
+            sectionInfo['section'] = sectionid
             sectionInfo['summary'] = sectionHTML
 
             self.sectionsToUpdate.append(sectionInfo)

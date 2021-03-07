@@ -1,5 +1,5 @@
 # Strategic Business IT
-## Rocket trajectory module (Saturday)
+## Rocket trajectory (Sat)
 * Press `Space` to navigate through the slides
 * Use `Shift+Space` to go back
 * Save as **PDF**:

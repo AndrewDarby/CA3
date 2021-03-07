@@ -20,13 +20,13 @@ class Videos():
         
     def findvideos(self,videourl,termdates):
         # get HTML
-        #res = requests.get(videourl)
-        #soup = bs4.BeautifulSoup(res.text,"lxml")
-        f = open("googlevideotxt.html", "r")
+        res = requests.get(videourl)
+        soup = bs4.BeautifulSoup(res.text,"lxml")
+        #f = open("googlevideotxt.html", "r")
         #f.write(res.text)
-        file=f.read().replace('\n', '')
-        soup = bs4.BeautifulSoup(file,"lxml") 
-        f.close()
+        #file=f.read().replace('\n', '')
+        #soup = bs4.BeautifulSoup(file,"lxml") 
+        #f.close()
         videos = soup.find_all('div',class_ = 'Q5txwe')
         for video in videos:
             video_id = video.parent.parent.parent.parent.attrs['data-id']  # credit to Michael

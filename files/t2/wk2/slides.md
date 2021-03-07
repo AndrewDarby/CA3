@@ -1,5 +1,5 @@
 # Strategic Business IT
-## Home Automation with Python
+## Home Automation
 * Press `Space` to navigate through the slides
 * Use `Shift+Space` to go back
 * Save as **PDF**:

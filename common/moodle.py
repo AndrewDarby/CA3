@@ -5,8 +5,7 @@
 represents sections on moodle website
 """
 import pathlib
-
-import os
+import datetime
 from os import system, name
 from urllib.parse import urlparse
 from files.script import LocalGetSections, LocalUpdateSections
@@ -24,6 +23,14 @@ class Moodle():
         
     def FetchSections(self,courseId):       
         self.sections = LocalGetSections(courseId)
+            
+        
+    def GetSectionDateTitle(self,sectionid,yearstart):
+        yearstart = datetime.datetime.strptime(yearstart, '%Y-%m-%d')
+        sectionstartdate = yearstart + datetime.timedelta(days=(sectionid-1)*7)
+        sectionenddate = sectionstartdate + datetime.timedelta(days=6)
+        title = "{startdate} - {enddate}".format(startdate =sectionstartdate.strftime("%d %B"),enddate = sectionenddate.strftime("%d %B"))
+        return title
         
     def ClearSectionsToUpdate(self):
         self.sectionsToUpdate = [] 
@@ -39,8 +46,7 @@ class Moodle():
             else: # section exists
                 #Grap video links, and rebuild-all-files
                 videoHTML = findActionsByClass(section,"video")
-                sectionHTML = buildFilesSummary(f)
-                sectionHTML + videoHTML
+                sectionHTML = videoHTML + buildFilesSummary(f)
             sectionInfo = MOODLESECTION.copy()
             sectionInfo['section'] = sectionid
             sectionInfo['summary'] = sectionHTML
@@ -50,7 +56,7 @@ class Moodle():
             
     # Build html for Videos:
     # note different video in list can match same section#
-    def BuildSectionsFromVideos(self,videosbysection):
+    def BuildSectionsFromVideos(self,videosbysection,yearstart):
         for sectionid in videosbysection:
             videos = videosbysection[sectionid]['videolinks']
             videoHTML = ""
@@ -63,18 +69,18 @@ class Moodle():
                 #Grap video links, and rebuild-all-files
                 slidesHTML = findActionsByClass(section,"slides")
                 filesHTML = findActionsByClass(section,"files")
-                sectionHTML = slidesHTML + filesHTML + videoHTML
+                sectionHTML =  videoHTML + slidesHTML + filesHTML
             sectionInfo = MOODLESECTION.copy()
             sectionInfo['section'] = sectionid
             sectionInfo['summary'] = sectionHTML
-
+            sectionname = self.sections.getsections[sectionid]['name']
+            if ('Topic' in sectionname):
+                newname = self.GetSectionDateTitle(sectionid,yearstart)
+                sectionInfo['name'] = newname
             self.sectionsToUpdate.append(sectionInfo)
         
-    def UploadChanges(self,courseId):   ## <-- TO FINSIH
-        #LocalUpdateSections(courseid, data)
+    def UploadChanges(self,courseId):  
         sec_write = LocalUpdateSections(courseId, self.sectionsToUpdate)
-        if (courseId == 0):
-            print("nothing here")
      
     def PrintSections(self):  
         for x in range(1,len(self.sections.getsections)):

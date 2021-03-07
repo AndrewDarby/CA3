@@ -78,7 +78,7 @@ class Files():
                     elif (ext in secondaryfiles):
                         # include extra files if 'primary' wk{weekno} naming convention
                         extrafiles = fileinfo['extrafiles']
-                        title = filename[0:len(filename)-4]
+                        title = filename
                         fileurl = os.path.join(baseurl, filepath).replace('\\','/')
                         extrafileinfo = {"title": title, "url": fileurl}
                         extrafiles.append(extrafileinfo)
@@ -90,19 +90,6 @@ class Files():
                         fileinfo['lectureslides'][folder_no-1] = lectureslides   
                     self.filesPerSecton[sectionid] = fileinfo                      
                     
-
-    def FindNewContentUpload(self,sec):
-        updatesections = []
-        for lecture in self.lecturedetails:
-            lecture_week_number = lecture['weekno']
-            section = sec.getsections[lecture_week_number]
-            if ((len(section['summary'])) == 0 and self.isNoAnchorTag(section['summary'])):
-                summaryHTML = "new HTML" #-> function to build the HTML summary
-                newsection = {"section": lecture_week_number, "summary": summaryHTML}
-                updatesections.append(newsection)
-                
-    def isNoAnchorTag(self,text): # To complete
-        return False
     
     def mdfiletitle(self,filepath):
         with open(filepath, 'r') as infile:

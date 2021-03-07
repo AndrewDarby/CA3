@@ -1,5 +1,5 @@
 # Strategic Business IT
-## Distributed TCP battle ship game
+## Distributed battle ship
 * Press `Space` to navigate through the slides
 * Use `Shift+Space` to go back
 * Save as **PDF**:

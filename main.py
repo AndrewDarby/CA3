@@ -17,19 +17,23 @@ course = Moodle()
 course.FetchSections(courseid)
 ###course.PrintSections()
 
+## NOTE:
+## You can run together functions to 'findfiles' and 'findvideos' or run independently
+## For example comment out lines #25 - #28, or comment out #31 - #38
+
 ##Scan all local folders, and add to dictionary
 files = Files()
 files.findfiles(FILESFOLDER,GITHUBBASEURL,ALLFILES,SECODNDARYFILES,TERMSTARTDATES) 
 course.BuildSectionsFromFiles(files.filesPerSecton)
 course.UploadChanges(courseid)
 
-
-# videos = Videos()
-# videos.findvideos(GDRIVEVIDEOFOLDER,TERMSTARTDATES) ## remember read from live url !!
-# videos.sortvideosintosections()
-# #videos.printlinks()
-# #videos.printsections()
-# course.ClearSectionsToUpdate()
-# course.BuildSectionsFromVideos(videos.videospersection,TERMSTARTDATES[0])
-# course.UploadChanges(courseid)
+##Scan all local folders, and add to dictionary
+videos = Videos()
+videos.findvideos(GDRIVEVIDEOFOLDER,TERMSTARTDATES) ## remember read from live url !!
+videos.sortvideosintosections()
+#videos.printlinks()
+#videos.printsections()
+course.ClearSectionsToUpdate()
+course.BuildSectionsFromVideos(videos.videospersection,TERMSTARTDATES[0])
+course.UploadChanges(courseid)
 

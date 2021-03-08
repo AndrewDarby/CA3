@@ -20,7 +20,7 @@ class Files():
     # Walk the files folder.
         for folder, directories, files in os.walk(directory):         
 
-            print(f'folder {folder}')
+            #print(f'folder {folder}')
             x = re.search(r"t(\d{1,2}).*wk(\d{1,2}).*$", folder)
             if x is None:
                 continue  
